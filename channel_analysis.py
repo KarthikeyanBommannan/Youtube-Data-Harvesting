@@ -1,7 +1,7 @@
 import psycopg2 as pg2
 import pandas as pd
 
-conn = pg2.connect(host='localhost',user='postgres',password='karthi',port=5432,database='basic_db')
+conn = pg2.connect(host='localhost',user='postgres',password='karthi123',port=5432,database='YoutubeData')
 if conn:
     print("Connection Established Successfully")
     database = conn.cursor()
@@ -62,15 +62,6 @@ def question8():
     return ans1
 
 def question9():   
-    database.execute("SELECT channel.channel_name, AVG(video.duration) AS Average_duration FROM channel JOIN video ON channel.channel_name = video.channel_name GROUP BY channel.channel_name;")
-    result = database.fetchall()
-    ans1 = pd.DataFrame(result, columns=['channel_name', 'Average_duration']).reset_index(drop=True)
-    ans1['Average_duration'] = ans1['Average_duration'].astype(float)
-    ans1['Average_duration'] = ans1['Average_duration'].round(2)
-    ans1.index += 1
-    return ans1
-
-def question10():   
     database.execute("SELECT channel_name, video_name, comment_count FROM video ORDER BY comment_count DESC NULLS last;")
     result = database.fetchall()
     ans1 = pd.DataFrame(result, columns=['channel_name', 'video_name','comment_count']).reset_index(drop=True)
