@@ -1,8 +1,15 @@
 import streamlit as st
-from DataHarvesting import *
-from MongoConnection import *
-from mongo_to_sql import *
-from df_to_sql_table import *
+from DataHarvesting import generate_output
+from MongoConnection import upload_to_mongodb
+from MongoConnection import migrate_to_postgresSQL
+from mongo_to_sql import channel_info_df
+from mongo_to_sql import playlist_to_df
+from mongo_to_sql import comments_to_df
+from mongo_to_sql import video_to_df
+from df_to_sql_table import channel_table_creation
+from df_to_sql_table import playlist_table_creation
+from df_to_sql_table import video_table_creation
+from df_to_sql_table import comment_table_creation
 from channel_analysis import *
 
 st.set_page_config( page_title="Youtube Data Harvesting", page_icon= "📄",layout="wide")
@@ -119,8 +126,8 @@ def main():
                 st.success("Successfully Migrated to Postgres")                       
     with left_column:
         st.write("SELECTIVE 10 QUESTIONS")
-        questions = st.selectbox("Select the Question",
-            (   '1. What are the names of all the videos and their corresponding channels?',
+        questions = st.selectbox("Select the Question",('Tap to view',
+               '1. What are the names of all the videos and their corresponding channels?',
                 '2. Which channels have the most number of videos, and how many videos do they have?',
                 '3. What are the top 10 most viewed videos and their respective channels?',
                 '4. How many comments were made on each video, and what are their corresponding video names?',
@@ -128,8 +135,7 @@ def main():
                 '6. What is the total number of likes and dislikes for each video, and what are their corresponding video names?',
                 '7. What is the total number of views for each channel, and what are their corresponding channel names?',
                 '8. What are the names of all the channels that have published videos in the year 2022?',
-                '9. What is the average duration of all videos in each channel, and what are their corresponding channel names?',
-                '10. Which videos have the highest number of comments, and what are their corresponding channel names?'))
+                '9. Which videos have the highest number of comments, and what are their corresponding channel names?'))
         with left_column:
             if st.button("view data"):
                 if questions == '1. What are the names of all the videos and their corresponding channels?':
@@ -162,18 +168,12 @@ def main():
                 elif questions == '8. What are the names of all the channels that have published videos in the year 2022?':
                     with right_column:
                         st.dataframe(question8())
-                        
-                elif questions == '9. What is the average duration of all videos in each channel, and what are their corresponding channel names?':
-                    with right_column:    
+                
+                elif questions == '9. Which videos have the highest number of comments, and what are their corresponding channel names?':
+                    with right_column:
                         st.dataframe(question9())
                 
-                elif questions == '10. Which videos have the highest number of comments, and what are their corresponding channel names?':
-                    with right_column:
-                        st.dataframe(question10())
                 
-                else:
-                    print("No Question Selected")
-        
                                 
                         
                         
