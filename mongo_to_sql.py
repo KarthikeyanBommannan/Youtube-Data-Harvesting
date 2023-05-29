@@ -1,19 +1,6 @@
 from pymongo import MongoClient
 import pandas as pd
-import re
 
-
-def convert_duration(duration):
-    regex = r'PT(\d+H)?(\d+M)?(\d+S)?'
-    match = re.match(regex, duration)
-    if not match:
-        return '00:00:00'
-    hours, minutes, seconds = match.groups()
-    hours = int(hours[:-1]) if hours else 0
-    minutes = int(minutes[:-1]) if minutes else 0
-    seconds = int(seconds[:-1]) if seconds else 0
-    total_seconds = hours * 3600 + minutes * 60 + seconds
-    return total_seconds
 
 def channel_info_df():
     conn = MongoClient("mongodb+srv://karthikeyan:karthi007@clusters.ayv02is.mongodb.net/?retryWrites=true&w=majority")
@@ -62,6 +49,46 @@ def playlist_to_df():
     return pd.DataFrame(playlist_collection)
 
 
+def video_to_df():
+    conn = MongoClient("mongodb+srv://karthikeyan:karthi007@clusters.ayv02is.mongodb.net/?retryWrites=true&w=majority")
+    if conn:
+        print("Connection Established Successfully")
+    try:
+        database = conn["Youtube"]
+        collection = database["Channel_Data"]
+        documents = collection.find()
+        video_collection = []
+        for document in documents:
+            channel_name = document['Channel_Name']['Channel_Name']
+            if channel_name:
+                for key, value in document.items():
+                    if key.startswith('Video_Id_'):
+                        video_id = value
+                        video = {
+                            'Channel_Name': channel_name,
+                            'Video_Id': video_id.get('Video_Id'),
+                            'Playlist_Id': document['Channel_Name'].get('Playlist_Id'),
+                            'Video_Name': video_id.get('Video_Name'),
+                            'Video_Description': video_id.get('Video_Description'),
+                            'Published_Date': video_id.get('PublishedAt'),
+                            'View_Count': video_id.get('View_Count'),
+                            'Like_Count': video_id.get('Like_Count'),
+                            'Dislike_Count': video_id.get('Dislike_Count'),
+                            'Favourite_Count': video_id.get('Favorite_Count'),
+                            'Comment_Count': video_id.get('Comment_Count'),
+                            'Duration': video_id.get('Duration'),
+                            'Thumbnail': video_id.get('Thumbnail'),
+                            'Caption_Status': video_id.get('Caption_Status')
+                            }
+                        video_collection.append(video)
+
+    except Exception as e:
+        print(f"Error Occurred while retrieving the data: {str(e)}")
+
+    conn.close()
+
+    return pd.DataFrame(video_collection)
+
 def comments_to_df():
     conn = MongoClient("mongodb+srv://karthikeyan:karthi007@clusters.ayv02is.mongodb.net/?retryWrites=true&w=majority")
     if conn:
@@ -91,47 +118,3 @@ def comments_to_df():
         print(f"Error Occurred while retrieving the data: {str(e)}")
     conn.close()
     return pd.DataFrame(comment_collection)
-
-def video_to_df():
-    conn = MongoClient("mongodb+srv://karthikeyan:karthi007@clusters.ayv02is.mongodb.net/?retryWrites=true&w=majority")
-    if conn:
-        print("Connection Established Successfully")
-    try:
-        database = conn["Youtube"]
-        collection = database["Channel_Data"]
-        documents = collection.find()
-        video_collection = []
-        for document in documents:
-            channel_name = document['Channel_Name']['Channel_Name']
-            if channel_name:
-                for key, value in document.items():
-                    if key.startswith('Video_Id_'):
-                        duration = video_id.get('Duration')
-                        video_id = value
-                        video = {
-                            'Channel_Name': channel_name,
-                            'Video_Id': video_id.get('Video_Id'),
-                            'Playlist_Id': document['Channel_Name'].get('Playlist_Id'),
-                            'Video_Name': video_id.get('Video_Name'),
-                            'Video_Description': video_id.get('Video_Description'),
-                            'Published_Date': video_id.get('PublishedAt'),
-                            'View_Count': video_id.get('View_Count'),
-                            'Like_Count': video_id.get('Like_Count'),
-                            'Dislike_Count': video_id.get('Dislike_Count'),
-                            'Favourite_Count': video_id.get('Favorite_Count'),
-                            'Comment_Count': video_id.get('Comment_Count'),
-                            'Duration': convert_duration(duration),
-                            'Thumbnail': video_id.get('Thumbnail'),
-                            'Caption_Status': video_id.get('Caption_Status')
-                            }
-                        video_collection.append(video)
-
-    except Exception as e:
-        print(f"Error Occurred while retrieving the data: {str(e)}")
-
-    conn.close()
-
-    return pd.DataFrame(video_collection)
-
-
-
