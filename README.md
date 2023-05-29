@@ -10,11 +10,11 @@ Before running the scripts, make sure you have the following dependencies instal
 - `MongoDB` and PostgreSQL databases set up and running 
 
 Install the following packages in the python environment
--	pymongo package (for MongoDB interaction)
--	psycopg2 package (for PostgreSQL interaction)
-- pandas package (for data manipulation and analysis)
--	streamlit package (for User Interface and interactive data visualization)
--	Google Client Library for YouTube Data API for data retrieval from youtube
+-	`pymongo package`(for MongoDB interaction)
+-	`psycopg2 package` (for PostgreSQL interaction)
+- `pandas package` (for data manipulation and analysis)
+-	`streamlit package` (for User Interface and interactive data visualization)
+-	`Google Client Library` for YouTube Data API for data retrieval from youtube
 
 You can install the required Python packages using pip:
 
