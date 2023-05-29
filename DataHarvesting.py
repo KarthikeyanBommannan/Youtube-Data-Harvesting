@@ -3,18 +3,15 @@ from googleapiclient.discovery import build
 # import json
 def get_channel_details(API_Key,channel_ids):
     all_data=[]
-    # channel_ids = ["UCBPRJjIWfyNG4X-CRbnv78A"]
-    # API_Key = "AIzaSyB5fnty-2CkT-Wi_jAnAeM71d4-s4NzGSM"
     api_service_name = "youtube" 
     api_version = "v3"
     youtube = build(api_service_name, api_version,developerKey=API_Key)
-    # request = youtube.channels().list(part="snippet,contentDetails,statistics,status",id = ','.join(channel_ids))
-    # response = request.execute()
+    
         
     # for channel_id in channel_ids:
     request = youtube.channels().list(part="snippet,contentDetails,statistics,status,topicDetails",id = channel_ids)
     response = request.execute()
-        # for i in range(len(response["items"])):
+
     data = dict(
 
 
@@ -36,13 +33,10 @@ def get_channel_details(API_Key,channel_ids):
 def get_video_ids(API_Key,playlist_id):
     
     video_ids=[]
-    # API_Key = "AIzaSyB5fnty-2CkT-Wi_jAnAeM71d4-s4NzGSM"
+    
     api_service_name = "youtube" 
     api_version = "v3"
-    # channel_det = get_channel_details(API_Key,channel_ids)
-    # playlist_id = channel_det['Channel_Name']['Playlist_Id']
     youtube = build(api_service_name, api_version,developerKey=API_Key)
-    
     request = youtube.playlistItems().list(
                                            part="snippet,contentDetails",
                                            playlistId = playlist_id,
@@ -75,11 +69,8 @@ def get_video_ids(API_Key,playlist_id):
 
 def get_video_details_information(API_Key,video_ids):
     all_video_info = {}
-
-    # API_Key = "AIzaSyB5fnty-2CkT-Wi_jAnAeM71d4-s4NzGSM"
     api_service_name = "youtube" 
     api_version = "v3"
-    # video_ids = get_video_ids(API_Key)
     youtube = build(api_service_name, api_version, developerKey=API_Key)
     video_count = 0
     for i in range(0, len(video_ids), 50):
@@ -119,11 +110,9 @@ def get_video_details_information(API_Key,video_ids):
 
 def get_video_comments(API_Key,video_ids):
     all_comments = {}
-
-    # API_Key = "AIzaSyB5fnty-2CkT-Wi_jAnAeM71d4-s4NzGSM"
     api_service_name = "youtube"
     api_version = "v3"
-    # video_ids = get_video_ids(API_Key)
+    
     youtube = build(api_service_name, api_version, developerKey=API_Key)
 
     for video in video_ids:
@@ -178,6 +167,10 @@ def generate_output(API_Key,channel_ids):
     output = {**channel_details, **merged_details}
     
     return output
+
+
+
+
 
 
 
