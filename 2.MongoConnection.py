@@ -11,7 +11,7 @@ def upload_to_mongodb(API_Key,channel_ids):
     database = conn["Youtube"]
     collection = database["Channel_Data"]
     try:
-        collection.update_one({"_Channel_Id":channel_ids},upload,upsert=True)
+        collection.replace_one({"_Channel_Id": channel_ids}, upload, upsert=True)
         print("Data Uploaded Successfully")
     except Exception as e:
         print(f"Error Occurred while uploading the data: {str(e)}")
@@ -29,6 +29,12 @@ def migrate_to_postgresSQL():
         channel_names.append(channel_name)            
     conn.close() 
     return channel_names
+
+
+
+    
+    
+            
 
 
 
