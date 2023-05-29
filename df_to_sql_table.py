@@ -1,8 +1,11 @@
 
 import psycopg2 as pg2
-from mongo_to_sql import *
+from mongo_to_sql import channel_info_df
+from mongo_to_sql import playlist_to_df
+from mongo_to_sql import video_to_df
+from mongo_to_sql import comments_to_df
 
-conn = pg2.connect(host='localhost',user='postgres',password='karthi',port=5432,database='basic_db')
+conn = pg2.connect(host='localhost',user='postgres',password='karthi123',port=5432,database='YoutubeData')
 if conn:
     print("Connection Established Successfully")
     database = conn.cursor()
@@ -29,6 +32,7 @@ def channel_table_creation():
     for _, row in channel_df.iterrows():
         values = tuple(row)  # Convert the row to a tuple of values
         database.execute(insert_query1, values)
+    conn.commit()
         
 
 def playlist_table_creation():
@@ -44,6 +48,7 @@ def playlist_table_creation():
     for _, row in playlist_df.iterrows():
         values = tuple(row)  # Convert the row to a tuple of values
         database.execute(insert_query2, values)
+    conn.commit()
         
         
 def video_table_creation():
@@ -61,7 +66,7 @@ def video_table_creation():
                                     dislike_count INT,
                                     favorite_count INT,
                                     comment_count INT,
-                                    duration INT,
+                                    duration VARCHAR(255),
                                     thumbnail VARCHAR(255),
                                     caption_status VARCHAR(255),
                                     FOREIGN KEY (playlist_id) REFERENCES playlist(playlist_id)
@@ -71,6 +76,7 @@ def video_table_creation():
     for _, row in video_df.iterrows():
         values = tuple(row)  # Convert the row to a tuple of values
         database.execute(insert_query3, values) 
+    conn.commit()
          
         
         
@@ -89,8 +95,7 @@ def comment_table_creation():
                                     VALUES (%s,%s,%s,%s,%s,%s)'''
     for _, row in comment_df.iterrows():
         values = tuple(row)  # Convert the row to a tuple of values
-        database.execute(insert_query4, values)  
+        database.execute(insert_query4, values) 
+    conn.commit() 
 
-conn.commit()
-# database.close()
-# conn.close()
+
