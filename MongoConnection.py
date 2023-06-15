@@ -1,22 +1,24 @@
 from pymongo import MongoClient
 from DataHarvesting import generate_output
+import json
 
-
-def upload_to_mongodb(API_Key,channel_ids):
+def upload_to_mongodb(API_Key, channel_id):
     conn = MongoClient("mongodb+srv://karthikeyan:karthi007@clusters.ayv02is.mongodb.net/?retryWrites=true&w=majority")
     if conn:
         print("Connection Established Successfully")
-        
-    upload = generate_output(API_Key,channel_ids)   
+
+    upload = generate_output(API_Key, channel_id)
     database = conn["Youtube"]
     collection = database["Channel_Data"]
     try:
-        collection.replace_one({"_Channel_Id": channel_ids}, upload, upsert=True)
+        upload_json = json.dumps(upload)  # Convert upload to JSON format
+        collection.update_one({"_Channel_Id": channel_id}, {"$set": json.loads(upload_json)}, upsert=True)
         print("Data Uploaded Successfully")
     except Exception as e:
         print(f"Error Occurred while uploading the data: {str(e)}")
-        
-    conn.close()
+    finally:
+        if conn:
+            conn.close()
     
     
 def migrate_to_postgresSQL():
@@ -29,12 +31,6 @@ def migrate_to_postgresSQL():
         channel_names.append(channel_name)            
     conn.close() 
     return channel_names
-
-
-
-    
-    
-            
 
 
 
